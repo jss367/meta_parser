@@ -24,6 +24,10 @@ def parse_xmp(xmp_string):
         count = xmp.count_array_items(namespace, name)
         return [xmp.get_array_item(namespace, name, index) for index in range(1, count + 1)]
 
+    iso = property_value(ns_exif, "ISOSpeedRatings")
+    if iso == "" and xmp.does_property_exist(ns_exif, "ISOSpeedRatings[1]"):
+        iso = xmp.get_array_item(ns_exif, "ISOSpeedRatings", 1)
+
     # Extract relevant information
     info = {
         "Creator Tool": property_value(ns_xmp, 'CreatorTool'),
@@ -31,7 +35,7 @@ def parse_xmp(xmp_string):
         "Camera Make": property_value(ns_tiff, 'Make'),
         "Camera Model": property_value(ns_tiff, 'Model'),
         "Lens": property_value(ns_exif_ex, 'LensModel'),
-        "ISO": property_value(ns_exif, 'ISOSpeedRatings'),
+        "ISO": iso,
         "Exposure Time": property_value(ns_exif, 'ExposureTime'),
         "Aperture": property_value(ns_exif, 'FNumber'),
         "Focal Length": property_value(ns_exif, 'FocalLength'),
